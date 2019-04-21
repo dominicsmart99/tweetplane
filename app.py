@@ -6,19 +6,22 @@ from models.forms import SignUpForm, LoginForm
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'QLIA1cy9Svg4lgai'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tweetplane.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['TEMPLATES_AUTO_RELOAD'] = True # use false for production
+""" app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['TEMPLATES_AUTO_RELOAD'] = True # use false for production """
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+from models.user import User
 
-@app.before_first_request
+""" @app.before_first_request
 def setup():
     db.Model.metadata.drop_all(bind=db.engine)
     db.Model.metadata.create_all(bind=db.engine)
 # When the Flask app is shutting down, close the database session
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db.session.remove()
+    db.session.remove() """
+
 
 @app.route('/')
 def base():
@@ -28,7 +31,7 @@ def base():
 def home():
 	return render_template('home.html')
 
-@app.route('/login' methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
 	form = LoginForm()
 	if form.validate_on_submit():

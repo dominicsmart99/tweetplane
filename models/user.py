@@ -1,17 +1,16 @@
 from sqlalchemy import Column, String, Integer, Boolean, DateTime
+from sqlalchemy.sql import func
+from sqlalchemy.event import listen
 from app import db, bcrypt
 class User(db.Model):
-	__tablename__ - 'users'
-	id = Column(Integer, primary_key=True, autoincrement="auto")
-	username = Column(String(32), unique=True, nullable=False)
-	password = Column(String(64), nullable=False)
-	admin = Column(Boolean, default=False)
-	date_created = Column(DateTime(), server_default=func.now())
-
-	def __init__(self, username, password, admin=False):
-		self.username = username
-		self.password = password
-		self.admin = admin
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, autoincrement="auto")
+    username = Column(String(32), unique=True, nullable=False)
+    password = Column(String(64), nullable=False)
+    admin = Column(Boolean, default=False)
+    date_created = Column(DateTime(), server_default=func.now())
+    
+    def __repr__(self): return f"User('{self.username}', '{self.password}')"
 
 def createDefaultUsers(target, connection, **kw):
     default_user_details = [{
@@ -22,15 +21,15 @@ def createDefaultUsers(target, connection, **kw):
         'username': 'DSmart',
         'password': 'DSmart1',
         'admin': True
-    }{
+    }, {
         'username': 'JWilliams',
         'password': 'JWilliams1',
         'admin': True
-    }{
+    }, {
         'username': 'TLovell',
         'password': 'TLovell1',
         'admin': True
-    }{
+    }, {
         'username': 'CSamm',
         'password': 'CSamm1',
         'admin': True
@@ -57,4 +56,4 @@ def createNewUser(username, password):
 		print(e)
 		db.session.rollback()
 
-listen(User.__table__, 'after_create', create_default_users)
+#listen(User.__table__, 'after_create', createDefaultUsers)

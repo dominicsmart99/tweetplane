@@ -1,42 +1,39 @@
-{% extends "base.html" %}
 
-{% block content %}
-<div class="container">
-	<div class="row">
-		
-		<div class="col-lg-4">
-			<form method = "POST" action='/home'>
-			<h4>Source Selector</h4>
-			<select class="custom-select custom-select-lg-3" name='news_selector' onchange="this.form.submit()">
-				<option disabled selected value> -- select an option -- </option>
-				<option value="BluDevGroup">Blu Dev (Us)</option>
-				<option value="CGTNOfficial">CGTN</option>
-				<option value="AJEnglish">Al Jazeera English</option>
-				<option value="SkyNews">Sky News</option>
-				<option value="ABC">ABC News</option>
-				<option value="CNC3TV">CNC3TV</option>
-				<option value="CNN">CNN</option>
-				<option value="UrduGeoNews">UrduGeoNews</option>
-			</select>
-		</form>
-		</div>
-
-		<div class="col-lg-2 offset-lg-2">
-			<img src="https://winklevosscapital.com/wp-content/uploads/2014/10/2014-09-16-Anoynmous-The-Rise-of-Personal-Networks.jpg" height="150px" width="150px">
-		</div>
-		<div class="col=lg-4">
-			{% if current_user.is_authenticated %}
-			<h4>User Info</h4>
-			User Name: {{ current_user.username }}
-			{% else %}
-			<br>User Name:''
-			{% endif %}
-		</div>
-	</div>
-	<div class="row mt-3">
-		<div class="col">
-			<h4>Tweets</h4>
-				<table class="table table-striped table-hover">
+{% extends "base.html" %}{% block content %}
+<div class="container" style="padding-top: 40px;">
+    <div class="row">
+        <div class="col-lg-7" id="selector" style= "background-color: rgb(217,217,217);">
+           <form method = "POST" action='/tweetlist'>
+                <h4 style="color: rgb(0,128,128); margin-top: 20px;">Source Selector</h4>
+                <select class="custom-select custom-select-lg-3" name='news_selector' style="margin-top: 15px;" onchange="this.form.submit()">
+                    <option disabled selected value> -- select an option -- </option>
+                    <option value="BluDevGroup">Blu Dev (Us)</option>
+                    <option value="CGTNOfficial">CGTN</option>
+                    <option value="AJEnglish">Al Jazeera English</option>
+                    <option value="SkyNews">Sky News</option>
+                    <option value="ABC">ABC News</option>
+                    <option value="CNC3TV">CNC3TV</option>
+                    <option value="CNN">CNN</option>
+                    <option value="UrduGeoNews">UrduGeoNews</option>
+                </select>
+           </form>
+       </div>
+        <div class="col-lg-4 offset-lg-1" style= "background-color: rgb(217,217,217);">
+            <div><img src='https://i.ibb.co/z4cVd6k/AAB.jpg' width="150px" height="150px" style="position: relative; float:left; margin-top: 20px; margin-left: 10px; margin-right: 15px;"></div>
+            <div class="userinfo">
+            	{% if current_user.is_authenticated %}
+                <h4 style="color: rgb(0,128,128); margin-top: 20px;">User Info</h4>
+                User Name:{{ current_user.username }}
+                {% else %}
+				<br>User Name:''
+				{% endif %}
+	            </div>
+        </div>
+    </div>    
+    <div class="row mt-1">
+        <div class="col" style="background-color: rgb(217,217,217); padding-top: 20px; margin-top: 40px;">
+            <h4 style="color: rgb(0,128,128);">Tweets</h4>
+            	<table class="table table-striped table-hover">
                     <thead class="thead-dark">
                         <tr>
                             <th>Handle</th><th>Tweets</th><th>Likes</th><th>Date Created</th>
@@ -52,30 +49,27 @@
                             </tr>
                             {% endfor %}
                         </tbody>
-				</table>
-				<img src="https://i.imgur.com/IjNgSYC.png" width="75%">
-		</div>
-	</div>
-	{% if current_user.admin == True %}
-	<h4>@BluDevGroup</h4>
-	<div class="row mt-3">
-		
-		<div class="col-lg-4">
-			<form method = "POST" action= "{{ url_for('postTweet') }}">
-			<textarea class="form-control" aria-label="With textarea" name="tweet_content"></textarea>
-			<a href="{{host}}/deletetweet"><button type="button" class="btn btn-success">Delete</button></a>
-			<input type="submit" value="PostTweet">
-			</form>
-		</div>
-		<div class="col-lg-1">	
-			{% endif %}
-		</div>
-		{% if error %}
-		{{error}}
-		{% endif %}
-
-	</div>
-
-</div>
-
-{% endblock %}	
+                </table>
+        </div>
+    </div> 
+    <div class="row">
+        <img src="https://i.ibb.co/j3xXC3C/Aplot.png" width="100%">
+    </div>   
+    <div class="row mt-1">
+        <div class="col-lg-7" style="background-color: rgb(217,217,217); padding-top: 20px; margin-top: 40px; margin-bottom: 40px;">
+        	{% if current_user.admin == True %}
+            <h4 style="color: rgb(0,128,128);">@BluDevGroup</h4>
+            
+            <form method = "POST" action={{ url_for('postTweet') }}>
+            <textarea class="form-control" aria-label="With textarea" name="tweet_content" style="margin-top: 15px;"></textarea>
+            <a href="{{host}}/deletetweet"><button type="button" class="btn btn-success" style="background-color: rgb(127,127,127); position: relative; float: right; margin-top: 20px; margin-bottom: 20px; padding-top: 7px; padding-bottom: 7px; padding-top: 10px; padding-bottom: 10px; border: none; border-radius: 6px; color: rgb(35,47,57);">Delete</button></a>
+            <input type="submit" value="PostTweet" style="background-color: rgb(127,127,127); position: relative; float: right; margin-top: 20px; margin-bottom: 20px; padding-top: 7px; padding-bottom: 7px; padding-top: 10px; padding-bottom: 10px; border: none; border-radius: 6px; color: rgb(35,47,57);">
+            
+            </form>
+        </div>
+        {% else %}
+        <div class="col-lg-7">
+           
+       </div>
+       {% endif %}
+    </div>{% endblock %}

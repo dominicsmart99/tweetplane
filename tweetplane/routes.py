@@ -32,14 +32,14 @@ def home():
     tweets = twitter_client.get_tweets_by_handle(l)
     df = twitter_analyzer.tweets_to_dataframe(tweets)
     dic = twitter_analyzer.convert_df_to_dictionary(df)
-    handles = ['CGTNOfficial', 'AJEnglish', 'UrduGeoNews', 'SkyNews', 'CNC3TV','CNN','BBC']
-    tweets = twitter_client.get_tweets_by_handle(handles)
-    df = twitter_analyzer.tweets_to_dataframe(tweets)
+    #handles = ['CGTNOfficial', 'AJEnglish', 'UrduGeoNews', 'SkyNews', 'CNC3TV','CNN','BBC']
+    #tweets = twitter_client.get_tweets_by_handle(handles)
+    #df = twitter_analyzer.tweets_to_dataframe(tweets)
     #GENERATE TIME SERIES FOR ALL NEWS
-    time_likes = pd.Series(data = df['likes'].values, index = df['date'])
-    time_likes.plot(figsize = (16, 4), label = 'likes', legend = True)    
+    #time_likes = pd.Series(data = df['likes'].values, index = df['date'])
+    #time_likes.plot(figsize = (16, 4), label = 'likes', legend = True)    
     #SAVE PLOT
-    plt.savefig("plot.png")
+    #plt.savefig("plot.png")
     return render_template('home.html',records=dic)   
 
 

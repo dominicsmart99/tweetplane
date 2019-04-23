@@ -9,12 +9,12 @@ from flask_login import login_user, logout_user, current_user, login_required
 #tweet_analyzer = TwitterAnalyzer()
 @app.before_first_request
 def setup():
-    db.Model.metadata.drop_all(bind=db.engine)
+    #db.Model.metadata.drop_all(bind=db.engine)
     db.Model.metadata.create_all(bind=db.engine)
 # When the Flask app is shutting down, close the database session
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db.session.remove()
+#@app.teardown_appcontext
+#def shutdown_session(exception=None):
+    #db.session.remove()
 
 
 @app.route('/')

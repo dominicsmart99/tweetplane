@@ -5,18 +5,19 @@
 	<div class="row">
 		
 		<div class="col-lg-4">
-			<form method = "POST" action='/tweetlist'>
+			<form method = "POST" action='/home'>
 			<h4>Source Selector</h4>
-			<select class="custom-select custom-select-lg-3" name='news_selector'>
-				<option value="CGTNOfficial ‏" selected="selected">CGTN</option>
-				<option value="AJEnglish ‏">Al Jazeera English</option>
-				<option value="SkyNews ‏">Sky News</option>
+			<select class="custom-select custom-select-lg-3" name='news_selector' onchange="this.form.submit()">
+				<option disabled selected value> -- select an option -- </option>
+				<option value="BluDevGroup">Blu Dev (Us)</option>
+				<option value="CGTNOfficial">CGTN</option>
+				<option value="AJEnglish">Al Jazeera English</option>
+				<option value="SkyNews">Sky News</option>
 				<option value="ABC">ABC News</option>
 				<option value="CNC3TV">CNC3TV</option>
 				<option value="CNN">CNN</option>
 				<option value="UrduGeoNews">UrduGeoNews</option>
 			</select>
-			<input type="submit" value="GetTweets">
 		</form>
 		</div>
 
@@ -26,7 +27,7 @@
 		<div class="col=lg-4">
 			{% if current_user.is_authenticated %}
 			<h4>User Info</h4>
-			User Name:{{ current_user.username }}
+			User Name: {{ current_user.username }}
 			{% else %}
 			<br>User Name:''
 			{% endif %}
@@ -51,15 +52,16 @@
                             </tr>
                             {% endfor %}
                         </tbody>
-</table>
+				</table>
+				<img src={{url_for('static',filename='plot.png')}} width="75%">
 		</div>
 	</div>
 	<h4>@BluDevGroup</h4>
 	<div class="row mt-3">
 		
 		<div class="col-lg-4">
-			{% if current_user.username == "TLovell" %}
-			<form method = "POST" action={{ url_for('postTweet') }}>
+			{% if current_user.admin == True %}
+			<form method = "POST" action= "{{ url_for('postTweet') }}">
 			<textarea class="form-control" aria-label="With textarea" name="tweet_content"></textarea>
 			<a href="{{host}}/deletetweet"><button type="button" class="btn btn-success">Delete</button></a>
 			<input type="submit" value="PostTweet">

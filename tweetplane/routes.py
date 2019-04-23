@@ -1,13 +1,10 @@
 from flask import render_template, redirect, url_for, flash, request
 from tweetplane import app, db, bcrypt
 from tweetplane.models.forms import SignUpForm, LoginForm
-from tweetplane.models.twitter_api import TwitterClient, TwitterAuthenticator, TwitterListener,TweetAnalyzer
+from tweetplane.models.twitter_api import TwitterClient, TwitterAuthenticator, TwitterListener, TweetAnalyzer, pd, plt
 from tweetplane.models.user import User
 from flask_login import login_user, logout_user, current_user, login_required
 
-
-
-uname=''
 
 #tweet_analyzer = TwitterAnalyzer()
 @app.before_first_request
@@ -24,25 +21,51 @@ def shutdown_session(exception=None):
 def base():
 	return redirect(url_for("home"))
 
-@app.route('/home')
+@app.route('/home', methods=['GET','POST'])
 def home():
-	return render_template('home.html')
+    twitter_client = TwitterClient()
+    twitter_analyzer = TweetAnalyzer()
+    select = request.form.get('news_selector')
+    if not select: select='BluDevGroup'
+    l=[]
+    l.append(select)
+    tweets = twitter_client.get_tweets_by_handle(l)
+    df = twitter_analyzer.tweets_to_dataframe(tweets)
+    dic = twitter_analyzer.convert_df_to_dictionary(df)
+    handles = ['CGTNOfficial', 'AJEnglish', 'UrduGeoNews', 'SkyNews', 'CNC3TV','CNN','BBC']
+    tweets = twitter_client.get_tweets_by_handle(handles)
+    df = twitter_analyzer.tweets_to_dataframe(tweets)
+    #GENERATE TIME SERIES FOR ALL NEWS
+    time_likes = pd.Series(data = df['likes'].values, index = df['date'])
+    time_likes.plot(figsize = (16, 4), label = 'likes', legend = True)    
+    #SAVE PLOT
+    plt.savefig("plot.png")
+    return render_template('home.html',records=dic)   
+
+
+@app.route('/posttweet', methods=['GET','POST'])
+def postTweet():
+    twitter_client = TwitterClient()
+    twitter_analyzer = TweetAnalyzer()
+    text = request.form.get('tweet_content')
+    twitter_client.post_tweets(str(text))
+    tweets = twitter_client.get_user_timeline_tweets(1)
+    df = twitter_analyzer.tweets_to_dataframe(tweets)
+    dic = twitter_analyzer.convert_df_to_dictionary(df)
+    return render_template('home.html', records=dic)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    #uname = ''
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            flash(f'Welcome back {form.username.data}!', 'success')
+            flash(f'Welcome back {form.username.data}', 'success')
             global uname
             uname = form.username.data
-            return home()
-            
-            #return redirect(next_page) if next_page else redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('home'))
         else: flash('Login unsuccessful. Please check email and password.', 'danger')
     return render_template('login.html', form=form)
 
@@ -65,33 +88,13 @@ def signup():
         return redirect(url_for('login'))
     return render_template('signup.html', form=form)
 
-@app.route('/tweetlist', methods=['GET','POST'])
-def getTweets():
+@app.route('/deletetweet', methods = ['GET','POST'])
+def deleteTweet():
     twitter_client = TwitterClient()
-    twitter_analyzer = TweetAnalyzer()
-    select = request.form.get('news_selector')
-    #print(select)
-    l=[]
-    l.append(select)
-    tweets = twitter_client.get_tweets_by_handle(l)
-    df = twitter_analyzer.tweets_to_dataframe(tweets)
-    dic = twitter_analyzer.convert_df_to_dictionary(df)
+    l = twitter_client.get_user_timeline_tweets(1)
+    twitter_client.delete_last_tweet(l)
+    return redirect(url_for('home'))
     
-    return render_template('home.html',records=dic)
-  
-@app.route('/posttweet', methods = ['GET','POST'])
-def postTweet():
-    print('hi')
-    twitter_client = TwitterClient()
-    twitter_analyzer = TweetAnalyzer()
-    text = request.form.get('tweet_content')
-    #print("hi")
-    #twitter_client.post_tweets(str(text))
-    tweets = twitter_client.get_user_timeline_tweets(1)
-    df = twitter_analyzer.tweets_to_dataframe(tweets)
-    dic = twitter_analyzer.convert_df_to_dictionary(df)
-    return render_template('home.html', records=dic)
-        
     
     
 

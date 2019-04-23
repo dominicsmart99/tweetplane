@@ -25,7 +25,7 @@ def base():
 	return redirect(url_for("home"))
 
 @app.route('/home')
-def home(name=None):
+def home():
 	return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -81,16 +81,16 @@ def getTweets():
   
 @app.route('/posttweet', methods = ['GET','POST'])
 def postTweet():
+    print('hi')
     twitter_client = TwitterClient()
     twitter_analyzer = TweetAnalyzer()
-    text = request.form.get('news_selector')
-    print(text)
-
+    text = request.form.get('tweet_content')
+    #print("hi")
     #twitter_client.post_tweets(str(text))
     tweets = twitter_client.get_user_timeline_tweets(1)
     df = twitter_analyzer.tweets_to_dataframe(tweets)
     dic = twitter_analyzer.convert_df_to_dictionary(df)
-    return render_template('home.html',records=dic)
+    return render_template('home.html', records=dic)
         
     
     
